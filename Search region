@@ -46,4 +46,4 @@
 
   wp_pagenavi( array( 'query' => $innersearh ) );
   wp_reset_postdata();
-  ?>
+?>

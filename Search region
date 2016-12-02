@@ -1,49 +1,108 @@
-<?php $innersearh = new WP_Query(
-  array(
-      'post_type'=>'vehicles_template',
-      'post_status'=>'publish',
-      'posts_per_page'=> 1000,
-      'order'=> 'DESC',
-      //'cat'=> 3,
-      'paged' => get_query_var('paged'),
-      'meta_query' => array(
-          'relation' => 'OR',
-              array(
-                  'key' => 'region',
-                  'value' => sanitize_text_field( $_GET['region'] ),
-                  'compare' => 'LIKE'
-              ),
-              array(
-                  'key' => 'rental_start_date',
-                  'value' => sanitize_text_field( $_GET['start-date'] ),
-                  'compare' => 'LIKE'
-              ),
-              array(
-                  'key' => 'rental_end_date',
-                  'value' => sanitize_text_field( $_GET['end-date'] ),
-                  'compare' => 'LIKE'
-              )
-          )
-      ) 
-  );
-  ?>
-  <?php while ( $innersearh->have_posts() ) : $innersearh->the_post(); ?>
+<div id="primary" class="content-area">
+	<main id="main" class="site-main" role="main">
+	    <div class="container">
+            <div class="row vehicles-car vip-rentals">
+                <?php 
+                $region = $_GET['region'];
+                $rental_start_date = $_GET['rental_start_date'];
+                $rental_end_date = $_GET['rental_end_date'];
 
-  <div class="col-sm-3 col-md-3 text-center vehicles-list VIP-list">
-      <div class="vehicles-box-img">
-          <a href="<?php the_permalink(); ?>">
-              <?php the_post_thumbnail('vehicles-thumbnails'); ?>
-          </a>
-      </div>
-      <h5><span><?php get_the_title(); ?></span></h5>
-      <h4><?php get_field( 'tags' ); ?></h4>
-       <a class="gray-more" href="<?php the_permalink(); ?>">Details & Pricing</a>
-  </div>
+                $innersearh = new WP_Query(
+                        array(
+                            'post_type'=>'vehicles_template',
+                            'post_status'=>'publish',
+                            'posts_per_page'=> 1000,
+                            'order'=> 'DESC',
+                            //'cat'=> 3,
+                            'paged' => get_query_var('paged'),
+                            
+                            'meta_query' => array(
+                                    'relation' => 'AND',
+                                    array(
+                                        'key' => 'region',
+                                        'value' => $region,
+                                        'compare' => 'LIKE'
+                                    ),
+                                    array(
+                                        'key' => 'rental_start_date',
+                                        'value' => $rental_start_date,
+                                        'compare' => '>=',
+                                        'type' => 'DATE'
+                                    ),
+                                    array(
+                                        'key' => 'rental_end_date',
+                                        'value' => $rental_end_date,
+                                        'compare' => '<=',
+                                        'type' => 'DATE'
+                                    )
+                                )
+                            ) 
+                        );
+                    ?>
+                    <?php if( !empty( $region ) && !empty( $rental_start_date ) && !empty( $rental_end_date ) ) : ?>
+                        <?php if ( $innersearh->have_posts() ) : ?>
+                            <?php while ( $innersearh->have_posts() ) : $innersearh->the_post(); ?>
 
-  <?php 
-  //edit_post_link( __( 'Edit', 'twentyfourteen' ), '<span class="edit-link">', '</span>' );
-  endwhile;
+                                <div class="col-sm-3 col-md-3 text-center vehicles-list VIP-list">
+                                    <div class="vehicles-box-img">
+                                        <a href="<?php the_permalink(); ?>">
+                                            <?php the_post_thumbnail('vehicles-thumbnails'); ?>
+                                        </a>
+                                    </div>
+                                    <h5><span><?php get_the_title(); ?></span></h5>
+                                    <h4><?php get_field( 'tags' ); ?></h4>
+                                     <a class="gray-more" href="<?php the_permalink(); ?>">Details & Pricing</a>
+                                </div>
 
-  wp_pagenavi( array( 'query' => $innersearh ) );
-  wp_reset_postdata();
-?>
+                            <?php 
+                                //edit_post_link( __( 'Edit', 'twentyfourteen' ), '<span class="edit-link">', '</span>' );
+                                endwhile;
+                                wp_pagenavi( array( 'query' => $innersearh ) );
+                                wp_reset_postdata();
+                            ?>
+                        <?php else: ?>
+                						 <img class="logo" src="<?php echo $logo['url']; ?>" alt="Logo" />
+                             <h1 class="text-center">No Vechicles found! :(</h1>
+                            <div style="min-height: 50px;"></div>
+                        <?php endif; ?>
+                    <?php else: ?>
+                				<img class="logo" src="<?php echo $logo['url']; ?>" alt="Logo" />
+                        <h1 class="text-center">No Vechicles found! :(</h1>
+                        <div style="min-height: 50px;"></div>
+                    <?php endif; ?>
+            </div><!-- #row -->
+        </div>
+	</main><!-- #main -->
+</div><!-- #primary -->
+
+
+
+
+
+/***********************SCRIPT*******************************/
+$(function() {
+        $("#show_vehicles").on("click", function() {
+            var isValid = true;
+            var region = $("#region_type").val();
+            var start_date_type = $("#start_date_type").val();
+            var end_date_type = $("#end_date_type").val();
+
+            $("#region").val(region.replace(/-/g, ''));
+            $("#start_date").val(start_date_type.replace(/-/g, ''));
+            $("#end_date").val(end_date_type.replace(/-/g, ''));
+
+            $("form.vehicles input").each(function() {
+                if( $(this).val() == "" || $(this).length == 0 ) {
+                    $(this).addClass("error");
+                    isValid = false;
+                } else {
+                    $(this).removeClass("error");
+                }
+            });
+            
+            return isValid;
+        });
+
+        $( ".datepicker" ).datepicker({
+            dateFormat: "yy-mm-dd"
+        });

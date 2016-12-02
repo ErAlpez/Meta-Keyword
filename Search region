@@ -1,49 +1,49 @@
 <?php $innersearh = new WP_Query(
-                        array(
-                            'post_type'=>'vehicles_template',
-                            'post_status'=>'publish',
-                            'posts_per_page'=> 1000,
-                            'order'=> 'DESC',
-                            //'cat'=> 3,
-                            'paged' => get_query_var('paged'),
-                            'meta_query' => array(
-                                'relation' => 'OR',
-                                    array(
-                                        'key' => 'region',
-                                        'value' => sanitize_text_field( $_GET['region'] ),
-                                        'compare' => 'LIKE'
-                                    ),
-                                    array(
-                                        'key' => 'rental_start_date',
-                                        'value' => sanitize_text_field( $_GET['start-date'] ),
-                                        'compare' => 'LIKE'
-                                    ),
-                                    array(
-                                        'key' => 'rental_end_date',
-                                        'value' => sanitize_text_field( $_GET['end-date'] ),
-                                        'compare' => 'LIKE'
-                                    )
-                                )
-                            ) 
-                        );
-                    ?>
-                    <?php while ( $innersearh->have_posts() ) : $innersearh->the_post(); ?>
+  array(
+      'post_type'=>'vehicles_template',
+      'post_status'=>'publish',
+      'posts_per_page'=> 1000,
+      'order'=> 'DESC',
+      //'cat'=> 3,
+      'paged' => get_query_var('paged'),
+      'meta_query' => array(
+          'relation' => 'OR',
+              array(
+                  'key' => 'region',
+                  'value' => sanitize_text_field( $_GET['region'] ),
+                  'compare' => 'LIKE'
+              ),
+              array(
+                  'key' => 'rental_start_date',
+                  'value' => sanitize_text_field( $_GET['start-date'] ),
+                  'compare' => 'LIKE'
+              ),
+              array(
+                  'key' => 'rental_end_date',
+                  'value' => sanitize_text_field( $_GET['end-date'] ),
+                  'compare' => 'LIKE'
+              )
+          )
+      ) 
+  );
+  ?>
+  <?php while ( $innersearh->have_posts() ) : $innersearh->the_post(); ?>
 
-                        <div class="col-sm-3 col-md-3 text-center vehicles-list VIP-list">
-                            <div class="vehicles-box-img">
-                                <a href="<?php the_permalink(); ?>">
-                                    <?php the_post_thumbnail('vehicles-thumbnails'); ?>
-                                </a>
-                            </div>
-                            <h5><span><?php get_the_title(); ?></span></h5>
-                            <h4><?php get_field( 'tags' ); ?></h4>
-                             <a class="gray-more" href="<?php the_permalink(); ?>">Details & Pricing</a>
-                        </div>
+  <div class="col-sm-3 col-md-3 text-center vehicles-list VIP-list">
+      <div class="vehicles-box-img">
+          <a href="<?php the_permalink(); ?>">
+              <?php the_post_thumbnail('vehicles-thumbnails'); ?>
+          </a>
+      </div>
+      <h5><span><?php get_the_title(); ?></span></h5>
+      <h4><?php get_field( 'tags' ); ?></h4>
+       <a class="gray-more" href="<?php the_permalink(); ?>">Details & Pricing</a>
+  </div>
 
-                    <?php 
-                        //edit_post_link( __( 'Edit', 'twentyfourteen' ), '<span class="edit-link">', '</span>' );
-                        endwhile;
-                        
-                        wp_pagenavi( array( 'query' => $innersearh ) );
-                        wp_reset_postdata();
-                    ?>
+  <?php 
+  //edit_post_link( __( 'Edit', 'twentyfourteen' ), '<span class="edit-link">', '</span>' );
+  endwhile;
+
+  wp_pagenavi( array( 'query' => $innersearh ) );
+  wp_reset_postdata();
+  ?>
